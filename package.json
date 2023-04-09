@@ -1,9 +1,9 @@
 {
-  "name": "gpt-client",
+  "name": "talk-to-chatgpt",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "GPT Speaker",
-  "author": "",
+  "description": "An application that let's you talk with chat GPT",
+  "productName": "Talk to Chat GPT",
+  "author": "Romario Huebra <romarioj2h@gmail.com>",
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
@@ -13,7 +13,6 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^1.2.1",
-    "microsoft-cognitiveservices-speech-sdk": "^1.27.0",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",

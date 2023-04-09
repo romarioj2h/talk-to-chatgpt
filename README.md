@@ -1,6 +1,6 @@
-# GPT Speaker (gpt-client)
+# Talk to Chat GPT (talk-to-chatgpt)
 
-A Quasar Project
+An application that let's you talk with chat GPT
 
 ## Install the dependencies
 ```bash
