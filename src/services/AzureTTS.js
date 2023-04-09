@@ -8,7 +8,7 @@ export default {
                 text +
             '</voice>' +
         '</speak>'
-        axios.post('https://brazilsouth.tts.speech.microsoft.com/cognitiveservices/v1', azureData, {
+        return axios.post('https://brazilsouth.tts.speech.microsoft.com/cognitiveservices/v1', azureData, {
             headers: {
                 'Ocp-Apim-Subscription-Key': Settings.getAzureApiKey(),
                 'Content-Type': 'application/ssml+xml',
@@ -19,6 +19,6 @@ export default {
             const audioBlob = new Blob([audio.data], {type: "audio/mpeg"});
             const audioURL = URL.createObjectURL(audioBlob);
             (new Audio(audioURL)).play();
-        }).catch(error => console.log(error));
+        });
     }
 };

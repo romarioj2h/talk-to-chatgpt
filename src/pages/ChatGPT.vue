@@ -32,10 +32,11 @@
   
 <script>
 import { defineComponent, reactive } from 'vue'
-import AzureTTS from '../services/AzureTTS'
-import ChatGPT from '../services/ChatGPT'
+import AzureTTS from 'src/services/AzureTTS'
+import ChatGPT from 'src/services/ChatGPT'
 import { useQuasar } from 'quasar'
 import Settings from 'src/services/Settings'
+import SpeechRecognition from 'src/services/SpeechRecognition'
 
 export default defineComponent({
     name: 'ChatGPT',
@@ -45,11 +46,8 @@ export default defineComponent({
             allRequiredIsSet: Settings.allRequiredIsSet()
         });
         const $q = useQuasar()
+        const recognition = SpeechRecognition.getService();
 
-        const speechRecognition = window.webkitSpeechRecognition;
-        const recognition = new speechRecognition()
-        recognition.continuous = true;
-        recognition.lang = "pt-BR";
         recognition.onresult = function (event) {
             const current = event.resultIndex;
             const transcript = event.results[current][0].transcript;
@@ -57,9 +55,33 @@ export default defineComponent({
             ChatGPT.getCompletion(transcript).then(chatData => {
                 const responseChat = chatData.data.choices[0].message.content;
                 console.log(responseChat);
-                AzureTTS.speak(responseChat);
+                AzureTTS.speak(responseChat).catch(error => {
+                    if (error.response.status === 401) {
+                        $q.notify({
+                            message: 'The provided Azure TTS API Key provided is probably invalid, check the settings and try again',
+                            type: 'negative'
+                        });
+                    } else {
+                        $q.notify({
+                            message: 'Unknown error, check browser console for more details',
+                            type: 'negative'
+                        });
+                        console.log(error);
+                    }
+                });
             }).catch(error => {
-                console.log(error);
+                if (error.response.data.error.code === 'invalid_api_key') {
+                    $q.notify({
+                        message: 'The provided OpenAI API Key provided is invalid, check the settings and try again',
+                        type: 'negative'
+                    });
+                } else {
+                    $q.notify({
+                        message: 'Unknown error, check browser console for more details',
+                        type: 'negative'
+                    });
+                    console.log(error);
+                }
             });
         }
         recognition.onstart = function () {
@@ -69,7 +91,6 @@ export default defineComponent({
         recognition.onspeechend = function () {
             console.log("No Activity")
         }
-
         recognition.onerror = function (event) {
             if (event.error === 'no-speech') {
                 $q.notify('No speech detected, please try again!');
@@ -78,7 +99,6 @@ export default defineComponent({
             }
             console.log(event)
         }
-
         recognition.onend = function () {
             data.isListening = false;
         }
