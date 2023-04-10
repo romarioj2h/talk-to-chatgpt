@@ -52,10 +52,9 @@ export default defineComponent({
             const current = event.resultIndex;
             const transcript = event.results[current][0].transcript;
             console.log(transcript)
-            ChatGPT.getCompletion(transcript).then(chatData => {
-                const responseChat = chatData.data.choices[0].message.content;
-                console.log(responseChat);
-                AzureTTS.speak(responseChat).catch(error => {
+            ChatGPT.getCompletion(transcript).then(chatGPTResponse => {
+                console.log(chatGPTResponse);
+                AzureTTS.speak(chatGPTResponse).catch(error => {
                     if (error.response.status === 401) {
                         $q.notify({
                             message: 'The provided Azure TTS API Key provided is probably invalid, check the settings and try again',
@@ -95,7 +94,10 @@ export default defineComponent({
             if (event.error === 'no-speech') {
                 $q.notify('No speech detected, please try again!');
             } else if (event.error !== 'aborted') {
-                $q.notify('Something went wrong, please try again, Error : ' + event.error);
+                $q.notify({
+                    message: 'Something went wrong, please try again, Error : ' + event.error,
+                    type: 'negative'
+                });
             }
             console.log(event)
         }

@@ -8,7 +8,7 @@ export default {
             {
                 "model": "gpt-3.5-turbo",
                 "messages": [{"role": "user", "content": content}],
-                "temperature": 0.7
+                "temperature": Settings.getChatGptTemperature()
             },
             {
                 headers: {
@@ -16,6 +16,8 @@ export default {
                     'Content-Type': 'application/json'
                 }
             }
-        );
+        ).then(response => {
+            return response.data.choices[0].message.content;
+        });
     }
 }
